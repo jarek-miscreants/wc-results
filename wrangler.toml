@@ -1,0 +1,17 @@
+name = "wc-results"
+pages_build_output_dir = "public"
+compatibility_date = "2026-06-01"
+
+# D1 database binding.
+# 1. Create the DB:   npx wrangler d1 create wc-results
+# 2. Copy the returned database_id into the line below.
+[[d1_databases]]
+binding = "DB"
+database_name = "wc-results"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# Non-secret defaults for local dev. In production set JOIN_CODE and ADMIN_KEY
+# as encrypted secrets in the Cloudflare Pages dashboard instead.
+[vars]
+JOIN_CODE = "GOALS2026"
+ADMIN_KEY = "change-me-in-production"

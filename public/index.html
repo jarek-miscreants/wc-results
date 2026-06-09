@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>World Cup 2026 — Office Predictions</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- Login screen -->
+    <section id="login">
+      <div class="card">
+        <h1>⚽ Office World Cup</h1>
+        <p class="note">Predict the scores, climb the leaderboard. Points only — no real betting.</p>
+        <input id="name" placeholder="Your display name" maxlength="40" autocomplete="off" />
+        <input id="code" placeholder="Join code" autocomplete="off" />
+        <button id="joinBtn">Join the game</button>
+        <p id="loginError" class="error"></p>
+      </div>
+    </section>
+
+    <!-- Main app -->
+    <div id="app" class="hidden">
+      <header>
+        <h1>⚽ Office World Cup</h1>
+        <span class="who">Playing as <strong id="meName"></strong>
+          <button id="logoutBtn">Log out</button>
+        </span>
+      </header>
+      <main>
+        <div class="tabs">
+          <button id="tabFixtures" class="active">Predictions</button>
+          <button id="tabBoard">Leaderboard</button>
+        </div>
+        <div id="fixturesView"></div>
+        <div id="boardView" class="hidden"></div>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

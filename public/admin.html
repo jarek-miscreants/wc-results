@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin — Enter Results</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Admin — enter results</h1>
+      <p class="note">
+        Your admin key is kept only in this browser tab. Use this to record final
+        scores; the leaderboard updates automatically.
+      </p>
+
+      <div class="card">
+        <input id="key" placeholder="Admin key" style="width:100%;margin-bottom:0.7rem" />
+        <button id="seedBtn">Seed fixtures from fixtures.json</button>
+        <span id="seedMsg" class="note"></span>
+      </div>
+
+      <div id="list"></div>
+    </main>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const key = () => $("key").value.trim();
+
+      async function adminApi(path, body) {
+        const res = await fetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Admin-Key": key() },
+          body: JSON.stringify(body || {}),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Request failed");
+        return data;
+      }
+
+      $("seedBtn").onclick = async () => {
+        try {
+          const { seeded } = await adminApi("/api/admin/seed");
+          $("seedMsg").textContent = ` Loaded ${seeded} fixtures.`;
+          load();
+        } catch (e) {
+          $("seedMsg").textContent = " " + e.message;
+        }
+      };
+
+      async function load() {
+        const { fixtures } = await (await fetch("/api/fixtures")).json();
+        $("list").innerHTML = fixtures
+          .map(
+            (f) => `
+          <div class="card">
+            <div class="stage">${f.stage}${
+              f.status === "finished"
+                ? ` &middot; <span class="result-tag">final ${f.home_score}–${f.away_score}</span>`
+                : ""
+            }</div>
+            <div class="match">
+              <span class="team home">${f.home_team}</span>
+              <input class="score" id="h${f.id}" value="${f.home_score ?? ""}" />
+              <span class="vs">v</span>
+              <input class="score" id="a${f.id}" value="${f.away_score ?? ""}" />
+              <span class="team away">${f.away_team}</span>
+            </div>
+            <div class="meta">
+              <span></span>
+              <button onclick="saveResult(${f.id})">Save result</button>
+            </div>
+          </div>`
+          )
+          .join("");
+      }
+
+      window.saveResult = async (id) => {
+        try {
+          await adminApi("/api/admin/result", {
+            fixtureId: id,
+            home: Number($("h" + id).value),
+            away: Number($("a" + id).value),
+          });
+          load();
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+
+      load();
+    </script>
+  </body>
+</html>

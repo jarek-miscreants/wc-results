@@ -1,0 +1,14 @@
+[
+  { "id": 1,  "stage": "Group A", "home_team": "Mexico",      "away_team": "TBD A2",      "kickoff": "2026-06-11T20:00:00Z" },
+  { "id": 2,  "stage": "Group A", "home_team": "TBD A3",       "away_team": "TBD A4",      "kickoff": "2026-06-11T23:00:00Z" },
+  { "id": 3,  "stage": "Group B", "home_team": "Canada",       "away_team": "TBD B2",      "kickoff": "2026-06-12T19:00:00Z" },
+  { "id": 4,  "stage": "Group B", "home_team": "TBD B3",       "away_team": "TBD B4",      "kickoff": "2026-06-12T22:00:00Z" },
+  { "id": 5,  "stage": "Group D", "home_team": "USA",          "away_team": "TBD D2",      "kickoff": "2026-06-12T01:00:00Z" },
+  { "id": 6,  "stage": "Group C", "home_team": "TBD C1",       "away_team": "TBD C2",      "kickoff": "2026-06-13T16:00:00Z" },
+  { "id": 7,  "stage": "Group C", "home_team": "TBD C3",       "away_team": "TBD C4",      "kickoff": "2026-06-13T19:00:00Z" },
+  { "id": 8,  "stage": "Group D", "home_team": "TBD D3",       "away_team": "TBD D4",      "kickoff": "2026-06-13T22:00:00Z" },
+  { "id": 9,  "stage": "Group E", "home_team": "TBD E1",       "away_team": "TBD E2",      "kickoff": "2026-06-14T16:00:00Z" },
+  { "id": 10, "stage": "Group E", "home_team": "TBD E3",       "away_team": "TBD E4",      "kickoff": "2026-06-14T19:00:00Z" },
+  { "id": 11, "stage": "Group F", "home_team": "TBD F1",       "away_team": "TBD F2",      "kickoff": "2026-06-14T22:00:00Z" },
+  { "id": 12, "stage": "Group F", "home_team": "TBD F3",       "away_team": "TBD F4",      "kickoff": "2026-06-15T01:00:00Z" }
+]
