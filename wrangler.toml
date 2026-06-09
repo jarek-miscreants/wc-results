@@ -8,10 +8,10 @@ compatibility_date = "2026-06-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "wc-results"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "a7f348eb-612a-442b-aa85-5c0044dbdd4c"
 
 # Non-secret defaults for local dev. In production set JOIN_CODE and ADMIN_KEY
 # as encrypted secrets in the Cloudflare Pages dashboard instead.
 [vars]
-JOIN_CODE = "GOALS2026"
-ADMIN_KEY = "change-me-in-production"
+JOIN_CODE = "WC2026"
+ADMIN_KEY = "x0KfmaPl_zgbTIPk"
