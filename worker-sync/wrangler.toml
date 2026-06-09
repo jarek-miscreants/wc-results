@@ -1,0 +1,31 @@
+# Standalone Cron Worker that auto-fetches finished match results from
+# football-data.org and writes them into the shared D1 database.
+#
+# Pages can't run cron triggers, so this lives as its own Worker but binds the
+# SAME D1 database (same database_id as ../wrangler.toml).
+#
+# Setup (one-time):
+#   cd worker-sync
+#   npx wrangler secret put FOOTBALL_DATA_TOKEN   # paste your football-data.org token
+#   npx wrangler secret put SYNC_KEY              # optional: protects the manual /sync URL
+#   npx wrangler deploy
+name = "wc-results-sync"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+# Same account that owns the wc-results Pages project + D1 database.
+account_id = "dbcc77a7638a3a8837854b19683eb6d9"
+
+# Poll every 15 minutes. football-data.org free tier allows 10 req/min, so this
+# is comfortably within limits (1 request per run).
+[triggers]
+crons = ["*/15 * * * *"]
+
+# Same database as the Pages app — see ../wrangler.toml.
+[[d1_databases]]
+binding = "DB"
+database_name = "wc-results"
+database_id = "a7f348eb-612a-442b-aa85-5c0044dbdd4c"
+
+[vars]
+# football-data.org competition code. "WC" = FIFA World Cup. Change if needed.
+COMPETITION = "WC"

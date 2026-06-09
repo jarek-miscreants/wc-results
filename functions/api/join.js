@@ -16,6 +16,7 @@ export async function onRequestPost({ request, env }) {
 
   if (code !== env.JOIN_CODE) return bad("Wrong join code", 401);
   if (!name) return bad("Please enter a display name");
+  if (/[<>]/.test(name)) return bad("Display name can't contain < or >");
   if (pin.length < 4 || pin.length > 64) {
     return bad("PIN must be at least 4 characters");
   }

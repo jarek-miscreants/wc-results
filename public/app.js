@@ -24,10 +24,77 @@ async function api(path, { method = "GET", body } = {}) {
 }
 
 const $ = (id) => document.getElementById(id);
+
+// Escape any user- or admin-supplied string before it goes into innerHTML.
+// Player names, team names and stage labels are all attacker-influenced.
+const esc = (s) =>
+  String(s ?? "").replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+  );
+
+// Team name -> ISO 3166-1 alpha-2 code (for flag images). Covers every real
+// team in the fixtures plus a few common name variants. Knockout placeholders
+// (Q1, W73, L101…) aren't here and fall back to a neutral globe.
+const TEAM_ISO = {
+  Algeria: "dz", Argentina: "ar", Australia: "au", Austria: "at", Belgium: "be",
+  "Bosnia and Herzegovina": "ba", Brazil: "br", Canada: "ca", "Cape Verde": "cv",
+  "Cabo Verde": "cv", Colombia: "co", Croatia: "hr", "Curaçao": "cw", Curacao: "cw",
+  "Czech Republic": "cz", Czechia: "cz", "DR Congo": "cd", Ecuador: "ec", Egypt: "eg",
+  England: "gb-eng", France: "fr", Germany: "de", Ghana: "gh", Haiti: "ht", Iran: "ir",
+  Iraq: "iq", "Ivory Coast": "ci", "Côte d'Ivoire": "ci", Japan: "jp", Jordan: "jo",
+  Mexico: "mx", Morocco: "ma", Netherlands: "nl", "New Zealand": "nz", Norway: "no",
+  Panama: "pa", Paraguay: "py", Portugal: "pt", Qatar: "qa", "Saudi Arabia": "sa",
+  Scotland: "gb-sct", Senegal: "sn", "South Africa": "za", "South Korea": "kr",
+  Spain: "es", Sweden: "se", Switzerland: "ch", Tunisia: "tn", Turkey: "tr",
+  "Türkiye": "tr", "United States": "us", USA: "us", Uruguay: "uy", Uzbekistan: "uz",
+  Wales: "gb-wls", "Northern Ireland": "gb-nir",
+};
+
+const GLOBE_SVG =
+  `<svg class="flag flag-globe" viewBox="0 0 24 24" aria-hidden="true">` +
+  `<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/>` +
+  `<path fill="none" stroke="currentColor" stroke-width="1.6" d="M2 12h20M12 2c3 3 3 17 0 20M12 2c-3 3-3 17 0 20"/>` +
+  `</svg>`;
+
+// A circular flag image for a team, or a globe for unknown/placeholder teams.
+function flag(team) {
+  const code = TEAM_ISO[team];
+  if (!code) return GLOBE_SVG;
+  return (
+    `<img class="flag" src="https://flagcdn.com/w80/${code}.png" ` +
+    `srcset="https://flagcdn.com/w160/${code}.png 2x" ` +
+    `alt="${esc(team)}" title="${esc(team)}" loading="lazy" />`
+  );
+}
+
+// Inline SVG icons (stroke = currentColor, so they inherit text colour).
+const svg = (paths) =>
+  `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" ` +
+  `stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+const ICONS = {
+  calendar: svg(`<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>`),
+  clipboard: svg(`<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zM9 11h6M9 15h4"/>`),
+  check: svg(`<circle cx="12" cy="12" r="9"/><path d="M8.3 12.4l2.6 2.6 4.8-5.3"/>`),
+  grid: svg(`<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>`),
+  chevron: svg(`<path d="M6 9.5l6 6 6-6"/>`),
+};
+
 const fmtKickoff = (iso) =>
   new Date(iso).toLocaleString(undefined, {
     weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
   });
+
+// Kickoff split into a date line and a time line (for the two-line date column).
+function fmtKickoffParts(iso) {
+  const d = new Date(iso);
+  return {
+    date: d.toLocaleDateString(undefined, {
+      weekday: "short", day: "numeric", month: "short", year: "numeric",
+    }),
+    time: d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
+  };
+}
 
 // --- login ------------------------------------------------------------------
 let loginMode = "join"; // "join" | "login"
@@ -147,8 +214,13 @@ function renderFixtures() {
     return;
   }
 
-  // Group into collapsible sections by stage, in fixture order.
-  const stagesInOrder = [...new Set(shown.map((f) => f.stage))];
+  // Group into collapsible sections by stage, in canonical fixture order.
+  // Derive the order from ALL fixtures (not just the filtered subset) so a
+  // stage doesn't jump position when its earliest match gets predicted away.
+  const present = new Set(shown.map((f) => f.stage));
+  const stagesInOrder = [...new Set(allFixtures.map((f) => f.stage))].filter(
+    (s) => present.has(s)
+  );
   if (openStages === null) openStages = new Set([stagesInOrder[0]]);
 
   for (const stage of stagesInOrder) {
@@ -159,7 +231,7 @@ function renderFixtures() {
     const header = document.createElement("button");
     header.className = "stage-header" + (open ? " open" : "");
     header.innerHTML =
-      `<span class="stage-name">${stage}` +
+      `<span class="stage-name">${esc(stage)}` +
       (w > 1 ? ` <span class="weight">×${w}</span>` : "") +
       `</span><span class="count">${matches.length}</span>`;
     header.onclick = () => {
@@ -185,16 +257,16 @@ function renderFilterBar(now) {
   const todo = allFixtures.filter((f) => isOpen(f, now) && !myPredictions[f.id]).length;
   const predicted = allFixtures.filter((f) => myPredictions[f.id]).length;
   const chips = [
-    ["todo", `To predict (${todo})`],
-    ["predicted", `Predicted (${predicted})`],
-    ["all", "All"],
+    ["todo", `To predict (${todo})`, ICONS.clipboard],
+    ["predicted", `Predicted (${predicted})`, ICONS.check],
+    ["all", "All", ICONS.grid],
   ];
   const chipWrap = document.createElement("div");
   chipWrap.className = "chips";
-  for (const [val, label] of chips) {
+  for (const [val, label, icon] of chips) {
     const b = document.createElement("button");
     b.className = "chip" + (statusFilter === val ? " active" : "");
-    b.textContent = label;
+    b.innerHTML = `${icon}<span>${esc(label)}</span>`;
     b.onclick = () => {
       statusFilter = val;
       renderFixtures();
@@ -208,13 +280,20 @@ function renderFilterBar(now) {
   sel.id = "stageFilter";
   sel.innerHTML =
     `<option value="all">All stages</option>` +
-    stages.map((s) => `<option value="${s}">${s}</option>`).join("");
+    stages.map((s) => `<option value="${esc(s)}">${esc(s)}</option>`).join("");
   sel.value = stageFilter;
   sel.onchange = () => {
     stageFilter = sel.value;
     renderFixtures();
   };
-  bar.appendChild(sel);
+
+  // Wrap the native select so we can show a calendar icon + custom chevron.
+  const selWrap = document.createElement("div");
+  selWrap.className = "select-wrap";
+  selWrap.innerHTML = `<span class="lead-ic">${ICONS.calendar}</span>`;
+  selWrap.appendChild(sel);
+  selWrap.insertAdjacentHTML("beforeend", `<span class="trail-ic">${ICONS.chevron}</span>`);
+  bar.appendChild(selWrap);
   return bar;
 }
 
@@ -227,14 +306,14 @@ function renderMatch(f, now) {
   card.className = "card match-card";
   card.innerHTML = `
     <div class="match">
-      <span class="team home">${f.home_team}</span>
+      <span class="kickoff">${ICONS.calendar}<span class="kt"><span class="kd">${esc(
+        fmtKickoffParts(f.kickoff).date
+      )}</span><span class="ktime">${esc(fmtKickoffParts(f.kickoff).time)}</span></span></span>
+      <span class="team home"><span class="name">${esc(f.home_team)}</span>${flag(f.home_team)}</span>
       <input class="score" inputmode="numeric" data-side="home" value="${pred.home ?? ""}" ${locked ? "disabled" : ""} />
-      <span class="vs">v</span>
+      <span class="vs">–</span>
       <input class="score" inputmode="numeric" data-side="away" value="${pred.away ?? ""}" ${locked ? "disabled" : ""} />
-      <span class="team away">${f.away_team}</span>
-    </div>
-    <div class="meta">
-      <span class="kickoff">${fmtKickoff(f.kickoff)}</span>
+      <span class="team away">${flag(f.away_team)}<span class="name">${esc(f.away_team)}</span></span>
       <span class="status"></span>
     </div>
     <div class="picks hidden"></div>`;
@@ -248,7 +327,7 @@ function renderMatch(f, now) {
     statusEl.textContent = "🔒 Locked";
   } else {
     const btn = document.createElement("button");
-    btn.textContent = "Save";
+    btn.textContent = myPredictions[f.id] ? "Update" : "Save";
     btn.onclick = () => savePrediction(f.id, card, statusEl);
     statusEl.appendChild(btn);
   }
@@ -260,7 +339,10 @@ function renderMatch(f, now) {
     toggle.className = "ghost";
     toggle.textContent = "See everyone's picks";
     toggle.onclick = () => togglePicks(f.id, picksEl, toggle);
-    card.querySelector(".meta").appendChild(toggle);
+    const foot = document.createElement("div");
+    foot.className = "card-foot";
+    foot.appendChild(toggle);
+    card.insertBefore(foot, picksEl);
   }
   return card;
 }
@@ -280,7 +362,7 @@ async function togglePicks(fixtureId, picksEl, toggle) {
       ? picks
           .map(
             (p) =>
-              `<div class="pick-row"><span>${p.name}</span>` +
+              `<div class="pick-row"><span>${esc(p.name)}</span>` +
               `<span>${p.home}–${p.away}` +
               (p.points ? ` <span class="saved">+${p.points}</span>` : "") +
               `</span></div>`
@@ -306,6 +388,8 @@ async function savePrediction(fixtureId, card, statusEl) {
       body: { fixtureId, home: Number(home), away: Number(away) },
     });
     myPredictions[fixtureId] = { home: Number(home), away: Number(away) };
+    const btn = statusEl.querySelector("button");
+    if (btn) btn.textContent = "Update";
     flash(statusEl, "✓ Saved");
     // Keep the chip counts in sync once the confirmation has been seen.
     if (statusFilter === "todo") setTimeout(renderFixtures, 1000);
@@ -336,7 +420,7 @@ async function loadBoard() {
       const me = s.name === store.name ? "me" : "";
       return `<tr class="${me}">
         <td class="num">${i + 1}</td>
-        <td>${s.name}</td>
+        <td>${esc(s.name)}</td>
         <td class="num">${s.points}</td>
         <td class="num">${s.exact}</td>
         <td class="num">${s.played}</td>

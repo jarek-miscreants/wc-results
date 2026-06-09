@@ -48,27 +48,39 @@
         }
       };
 
+      // Escape admin/user strings before they go into innerHTML.
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+        );
+
       async function load() {
         const { fixtures } = await (await fetch("/api/fixtures")).json();
         $("list").innerHTML = fixtures
           .map(
             (f) => `
           <div class="card">
-            <div class="stage">${f.stage}${
+            <div class="stage">${esc(f.stage)}${
               f.status === "finished"
                 ? ` &middot; <span class="result-tag">final ${f.home_score}–${f.away_score}</span>`
                 : ""
             }</div>
             <div class="match">
-              <span class="team home">${f.home_team}</span>
+              <input class="team-edit home" id="th${f.id}" value="${esc(f.home_team)}" />
               <input class="score" id="h${f.id}" value="${f.home_score ?? ""}" />
               <span class="vs">v</span>
               <input class="score" id="a${f.id}" value="${f.away_score ?? ""}" />
-              <span class="team away">${f.away_team}</span>
+              <input class="team-edit away" id="ta${f.id}" value="${esc(f.away_team)}" />
             </div>
             <div class="meta">
-              <span></span>
-              <button onclick="saveResult(${f.id})">Save result</button>
+              <label class="kickoff-edit">Kickoff (ISO/UTC)
+                <input id="k${f.id}" value="${esc(f.kickoff)}" />
+              </label>
+              <span class="actions">
+                <button class="ghost" onclick="saveDetails(${f.id})">Save details</button>
+                <button onclick="saveResult(${f.id})">Save result</button>
+              </span>
             </div>
           </div>`
           )
@@ -81,6 +93,22 @@
             fixtureId: id,
             home: Number($("h" + id).value),
             away: Number($("a" + id).value),
+          });
+          load();
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+
+      // Update team names / kickoff (e.g. to replace placeholder knockout labels
+      // like "W73" once a matchup is known, or fix a kickoff time).
+      window.saveDetails = async (id) => {
+        try {
+          await adminApi("/api/admin/fixture", {
+            fixtureId: id,
+            home_team: $("th" + id).value.trim(),
+            away_team: $("ta" + id).value.trim(),
+            kickoff: $("k" + id).value.trim(),
           });
           load();
         } catch (e) {

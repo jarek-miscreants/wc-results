@@ -100,10 +100,52 @@ schedule as it's confirmed, then re-run **Seed fixtures** in the admin page
 (existing rows are left untouched by id, so it's safe to re-run). Scoring weights
 per round live in `stageWeight()` in `lib/api.js` if you want to tune them.
 
+## Editing fixtures after seeding
+
+Seeding only *inserts* new fixtures (existing rows are never overwritten), so to
+change a match's teams or kick-off time, use the **admin page**: each match has
+editable team-name and kick-off (ISO 8601 / UTC) fields and a **Save details**
+button (`POST /api/admin/fixture`). Use it to:
+
+- replace placeholder knockout labels (`A2`, `W73`, `L101`) with the real teams
+  once a matchup is decided, and
+- correct a wrong kick-off time.
+
+## Automatic results (cron Worker)
+
+`worker-sync/` is a small standalone Worker that polls **football-data.org**
+every 15 minutes, finds finished matches, and writes their scores into the same
+D1 database (marking the fixture `finished` so the leaderboard scores it). It's a
+separate Worker because Cloudflare Pages can't run cron triggers.
+
+**Matching is conservative:** a finished API match is applied only when it maps to
+*exactly one* not-yet-finished fixture whose home and away team names both match
+(accent/punctuation-insensitive, same orientation). Ambiguous or unmatched games
+are skipped and reported — never guessed. So keep fixture team names accurate
+(use **Save details** above to fill in real teams as the bracket resolves).
+
+> Scores use the API's `fullTime` scoreline (includes extra time, excludes penalty
+> shootouts). Adjust in `worker-sync/src/index.js` if your house rules differ.
+
+One-time setup:
+
+```bash
+cd worker-sync
+npx wrangler secret put FOOTBALL_DATA_TOKEN   # your token from football-data.org
+npx wrangler secret put SYNC_KEY              # optional: protects the manual /sync URL
+npx wrangler deploy
+```
+
+Get a free token at <https://www.football-data.org/client/register>. The free
+tier covers the World Cup (`COMPETITION = "WC"` in `worker-sync/wrangler.toml`)
+and 10 requests/min — well within one poll per 15 min. Trigger a run by hand for
+testing: `GET https://wc-results-sync.<your-subdomain>.workers.dev/sync?key=SYNC_KEY`
+(returns a JSON report of applied/unmatched matches).
+
 ## Notes & possible next steps
 
 - Auth is intentionally light: a shared join code + a unique display name, with a
   token stored in the browser. Good enough for a low-stakes office game. For
   stronger access control, put the site behind **Cloudflare Access** (SSO).
-- Possible additions: group/department sub-leaderboards, auto-fetching results
-  from a football API, or email/Slack reminders before kick-off.
+- Possible additions: group/department sub-leaderboards or email/Slack reminders
+  before kick-off.
