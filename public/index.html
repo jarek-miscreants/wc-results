@@ -30,7 +30,7 @@
     <!-- Main app -->
     <div id="app" class="hidden">
       <header>
-        <h1>⚽ Miscreants World Cup</h1>
+        <h1>⚽ Miscreants World Cup <span id="matchday" class="matchday hidden"></span></h1>
         <span class="who">Playing as <strong id="meName"></strong>
           <button id="logoutBtn">Log out</button>
         </span>
@@ -38,9 +38,11 @@
       <main>
         <div class="tabs">
           <button id="tabFixtures" class="active">Predictions</button>
+          <button id="tabResults">My results</button>
           <button id="tabBoard">Leaderboard</button>
         </div>
         <div id="fixturesView"></div>
+        <div id="resultsView" class="hidden"></div>
         <div id="boardView" class="hidden"></div>
       </main>
     </div>
