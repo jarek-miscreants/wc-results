@@ -11,6 +11,7 @@ rights only.
 - Predictions **lock automatically at kickoff**
 - After kickoff, anyone can reveal **everyone's picks** for a match
 - All **104 matches** (12 groups + full knockout bracket) are included
+- Players pick a **name + PIN**, so they can log in again from any device
 
 ## Stack
 
@@ -58,6 +59,8 @@ Click **Seed fixtures** to populate matches.
    ```bash
    npm run db:init:remote
    ```
+   > Already created the database before the PIN feature was added? Add the new
+   > column once: `npx wrangler d1 execute wc-results --remote --command "ALTER TABLE users ADD COLUMN pin_hash TEXT NOT NULL DEFAULT ''"`
 3. **Deploy** (or connect this Git repo in the Pages dashboard for auto-deploys):
    ```bash
    npm run deploy
@@ -75,7 +78,9 @@ Click **Seed fixtures** to populate matches.
 ## Running the game
 
 1. Share the site URL + the `JOIN_CODE` with employees.
-2. Players enter a display name + the join code, then submit score predictions.
+2. **First time** ("Join"): a player enters a display name, picks a **PIN**, and
+   types the join code. **Returning** ("Log in"): just name + PIN — no join code,
+   works from any device. The browser also stays signed in automatically.
 3. After each match, an admin opens `/admin.html` and records the final score.
 4. The leaderboard updates automatically.
 

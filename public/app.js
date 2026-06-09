@@ -30,12 +30,33 @@ const fmtKickoff = (iso) =>
   });
 
 // --- login ------------------------------------------------------------------
-$("joinBtn").onclick = async () => {
+let loginMode = "join"; // "join" | "login"
+
+function setMode(mode) {
+  loginMode = mode;
+  const joining = mode === "join";
+  $("modeJoin").classList.toggle("active", joining);
+  $("modeLogin").classList.toggle("active", !joining);
+  $("code").classList.toggle("hidden", !joining); // join code only needed to join
+  $("pin").placeholder = joining ? "Choose a PIN (4+ chars)" : "Your PIN";
+  $("submitBtn").textContent = joining ? "Join the game" : "Log in";
+  $("loginHint").textContent = joining
+    ? "Your PIN lets you log back in on any device."
+    : "Use the name and PIN you picked when you joined.";
   $("loginError").textContent = "";
+}
+
+$("modeJoin").onclick = () => setMode("join");
+$("modeLogin").onclick = () => setMode("login");
+
+$("submitBtn").onclick = async () => {
+  $("loginError").textContent = "";
+  const body = { name: $("name").value, pin: $("pin").value };
+  if (loginMode === "join") body.code = $("code").value;
   try {
-    const { token, name } = await api("/api/join", {
+    const { token, name } = await api(loginMode === "join" ? "/api/join" : "/api/login", {
       method: "POST",
-      body: { name: $("name").value, code: $("code").value },
+      body,
     });
     store.set(token, name);
     showApp();

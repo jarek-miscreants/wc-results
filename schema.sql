@@ -4,6 +4,7 @@
 CREATE TABLE IF NOT EXISTS users (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
   name       TEXT NOT NULL UNIQUE,
+  pin_hash   TEXT NOT NULL,            -- PBKDF2 hash of the player's PIN
   token      TEXT NOT NULL UNIQUE,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

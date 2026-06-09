@@ -12,9 +12,17 @@
       <div class="card">
         <h1>⚽ Office World Cup</h1>
         <p class="note">Predict the scores, climb the leaderboard. Points only — no real betting.</p>
+
+        <div class="tabs">
+          <button id="modeJoin" class="active">First time</button>
+          <button id="modeLogin">Log in</button>
+        </div>
+
         <input id="name" placeholder="Your display name" maxlength="40" autocomplete="off" />
+        <input id="pin" type="password" placeholder="Choose a PIN (4+ chars)" autocomplete="off" />
         <input id="code" placeholder="Join code" autocomplete="off" />
-        <button id="joinBtn">Join the game</button>
+        <button id="submitBtn">Join the game</button>
+        <p class="note" id="loginHint">Your PIN lets you log back in on any device.</p>
         <p id="loginError" class="error"></p>
       </div>
     </section>
