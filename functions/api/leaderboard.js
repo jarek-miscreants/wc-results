@@ -1,4 +1,4 @@
-import { json, scorePrediction } from "../../lib/api.js";
+import { json, scorePrediction, basePoints } from "../../lib/api.js";
 
 // GET /api/leaderboard  ->  { standings: [{ name, points, exact, correct, played }] }
 // Scoring is computed in JS so the rules stay readable: 3 pts exact, 1 pt outcome.
@@ -6,7 +6,7 @@ export async function onRequestGet({ env }) {
   const [usersRes, fixturesRes, predsRes] = await Promise.all([
     env.DB.prepare("SELECT id, name FROM users").all(),
     env.DB.prepare(
-      "SELECT id, home_score, away_score, status FROM fixtures WHERE status = 'finished'"
+      "SELECT id, stage, home_score, away_score, status FROM fixtures WHERE status = 'finished'"
     ).all(),
     env.DB.prepare(
       "SELECT user_id, fixture_id, home_pred, away_pred FROM predictions"
@@ -25,11 +25,11 @@ export async function onRequestGet({ env }) {
     if (!fixture) continue; // match not finished yet
     const row = tally.get(p.user_id);
     if (!row) continue;
-    const pts = scorePrediction(p, fixture);
-    row.points += pts;
+    const base = basePoints(p, fixture);
+    row.points += scorePrediction(p, fixture);
     row.played += 1;
-    if (pts === 3) row.exact += 1;
-    else if (pts === 1) row.correct += 1;
+    if (base === 3) row.exact += 1;
+    else if (base === 1) row.correct += 1;
   }
 
   const standings = [...tally.values()].sort(

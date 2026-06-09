@@ -5,6 +5,7 @@
   "description": "Internal World Cup 2026 prediction game (points only, no real betting).",
   "scripts": {
     "dev": "wrangler pages dev --local",
+    "fixtures": "node scripts/generate-fixtures.mjs",
     "db:init": "wrangler d1 execute wc-results --local --file=./schema.sql",
     "db:init:remote": "wrangler d1 execute wc-results --remote --file=./schema.sql",
     "deploy": "wrangler pages deploy"

@@ -64,6 +64,17 @@ function switchTab(which) {
 }
 
 // --- fixtures + predictions -------------------------------------------------
+let allFixtures = [];
+let myPredictions = {};
+let stageFilter = "all";
+
+function stageWeight(stage) {
+  if (/^Group/.test(stage)) return 1;
+  if (stage === "Quarter-final" || stage === "Semi-final" || stage === "Third place") return 2;
+  if (stage === "Final") return 3;
+  return 1;
+}
+
 async function loadFixtures() {
   const view = $("fixturesView");
   view.innerHTML = "<p class='note'>Loading fixtures…</p>";
@@ -71,49 +82,122 @@ async function loadFixtures() {
     api("/api/fixtures"),
     api("/api/predictions"),
   ]);
+  allFixtures = fixtures;
+  myPredictions = predictions;
 
   if (!fixtures.length) {
     view.innerHTML = "<p class='note'>No fixtures loaded yet. The admin needs to seed them.</p>";
     return;
   }
+  renderFixtures();
+}
 
+function renderFixtures() {
+  const view = $("fixturesView");
   view.innerHTML = "";
+
+  // Stage filter (preserve document order: groups first, then knockout rounds).
+  const stages = [...new Set(allFixtures.map((f) => f.stage))];
+  const filter = document.createElement("select");
+  filter.id = "stageFilter";
+  filter.innerHTML =
+    `<option value="all">All matches</option>` +
+    stages.map((s) => `<option value="${s}">${s}</option>`).join("");
+  filter.value = stageFilter;
+  filter.onchange = () => {
+    stageFilter = filter.value;
+    renderFixtures();
+  };
+  view.appendChild(filter);
+
+  const shown = allFixtures.filter((f) => stageFilter === "all" || f.stage === stageFilter);
   const now = Date.now();
-  for (const f of fixtures) {
-    const locked = new Date(f.kickoff).getTime() <= now;
-    const pred = predictions[f.id] || {};
-    const finished = f.status === "finished";
+  let currentStage = null;
 
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <div class="stage">${f.stage}</div>
-      <div class="match">
-        <span class="team home">${f.home_team}</span>
-        <input class="score" inputmode="numeric" data-side="home" value="${pred.home ?? ""}" ${locked ? "disabled" : ""} />
-        <span class="vs">v</span>
-        <input class="score" inputmode="numeric" data-side="away" value="${pred.away ?? ""}" ${locked ? "disabled" : ""} />
-        <span class="team away">${f.away_team}</span>
-      </div>
-      <div class="meta">
-        <span class="kickoff">${fmtKickoff(f.kickoff)}</span>
-        <span class="status"></span>
-      </div>`;
-
-    const statusEl = card.querySelector(".status");
-    if (finished) {
-      statusEl.className = "result-tag";
-      statusEl.textContent = `Result: ${f.home_score}–${f.away_score}`;
-    } else if (locked) {
-      statusEl.className = "locked-tag";
-      statusEl.textContent = "🔒 Locked";
-    } else {
-      const btn = document.createElement("button");
-      btn.textContent = "Save";
-      btn.onclick = () => savePrediction(f.id, card, statusEl);
-      statusEl.appendChild(btn);
+  for (const f of shown) {
+    if (f.stage !== currentStage) {
+      currentStage = f.stage;
+      const w = stageWeight(f.stage);
+      const h = document.createElement("h2");
+      h.className = "stage-header";
+      h.innerHTML = `${f.stage}${w > 1 ? ` <span class="weight">×${w} points</span>` : ""}`;
+      view.appendChild(h);
     }
-    view.appendChild(card);
+    view.appendChild(renderMatch(f, now));
+  }
+}
+
+function renderMatch(f, now) {
+  const locked = new Date(f.kickoff).getTime() <= now;
+  const pred = myPredictions[f.id] || {};
+  const finished = f.status === "finished";
+
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="match">
+      <span class="team home">${f.home_team}</span>
+      <input class="score" inputmode="numeric" data-side="home" value="${pred.home ?? ""}" ${locked ? "disabled" : ""} />
+      <span class="vs">v</span>
+      <input class="score" inputmode="numeric" data-side="away" value="${pred.away ?? ""}" ${locked ? "disabled" : ""} />
+      <span class="team away">${f.away_team}</span>
+    </div>
+    <div class="meta">
+      <span class="kickoff">${fmtKickoff(f.kickoff)}</span>
+      <span class="status"></span>
+    </div>
+    <div class="picks hidden"></div>`;
+
+  const statusEl = card.querySelector(".status");
+  if (finished) {
+    statusEl.className = "result-tag";
+    statusEl.textContent = `Result: ${f.home_score}–${f.away_score}`;
+  } else if (locked) {
+    statusEl.className = "locked-tag";
+    statusEl.textContent = "🔒 Locked";
+  } else {
+    const btn = document.createElement("button");
+    btn.textContent = "Save";
+    btn.onclick = () => savePrediction(f.id, card, statusEl);
+    statusEl.appendChild(btn);
+  }
+
+  // Once locked, anyone can reveal everyone's picks for this match.
+  if (locked) {
+    const picksEl = card.querySelector(".picks");
+    const toggle = document.createElement("button");
+    toggle.className = "ghost";
+    toggle.textContent = "See everyone's picks";
+    toggle.onclick = () => togglePicks(f.id, picksEl, toggle);
+    card.querySelector(".meta").appendChild(toggle);
+  }
+  return card;
+}
+
+async function togglePicks(fixtureId, picksEl, toggle) {
+  if (!picksEl.classList.contains("hidden")) {
+    picksEl.classList.add("hidden");
+    toggle.textContent = "See everyone's picks";
+    return;
+  }
+  toggle.textContent = "Hide picks";
+  picksEl.classList.remove("hidden");
+  picksEl.innerHTML = "<span class='note'>Loading…</span>";
+  try {
+    const { picks } = await api(`/api/match-picks?fixtureId=${fixtureId}`);
+    picksEl.innerHTML = picks.length
+      ? picks
+          .map(
+            (p) =>
+              `<div class="pick-row"><span>${p.name}</span>` +
+              `<span>${p.home}–${p.away}` +
+              (p.points ? ` <span class="saved">+${p.points}</span>` : "") +
+              `</span></div>`
+          )
+          .join("")
+      : "<span class='note'>No one predicted this match.</span>";
+  } catch (e) {
+    picksEl.innerHTML = `<span class="error">${e.message}</span>`;
   }
 }
 
@@ -175,7 +259,7 @@ async function loadBoard() {
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
-      <p class="note">3 pts for an exact score, 1 pt for the right result.</p>
+      <p class="note">3 pts for an exact score, 1 pt for the right result. Later rounds score double (×2) or triple (final, ×3).</p>
     </div>`;
 }
 

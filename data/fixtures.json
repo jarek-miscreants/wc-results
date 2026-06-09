@@ -1,14 +1,730 @@
 [
-  { "id": 1,  "stage": "Group A", "home_team": "Mexico",      "away_team": "TBD A2",      "kickoff": "2026-06-11T20:00:00Z" },
-  { "id": 2,  "stage": "Group A", "home_team": "TBD A3",       "away_team": "TBD A4",      "kickoff": "2026-06-11T23:00:00Z" },
-  { "id": 3,  "stage": "Group B", "home_team": "Canada",       "away_team": "TBD B2",      "kickoff": "2026-06-12T19:00:00Z" },
-  { "id": 4,  "stage": "Group B", "home_team": "TBD B3",       "away_team": "TBD B4",      "kickoff": "2026-06-12T22:00:00Z" },
-  { "id": 5,  "stage": "Group D", "home_team": "USA",          "away_team": "TBD D2",      "kickoff": "2026-06-12T01:00:00Z" },
-  { "id": 6,  "stage": "Group C", "home_team": "TBD C1",       "away_team": "TBD C2",      "kickoff": "2026-06-13T16:00:00Z" },
-  { "id": 7,  "stage": "Group C", "home_team": "TBD C3",       "away_team": "TBD C4",      "kickoff": "2026-06-13T19:00:00Z" },
-  { "id": 8,  "stage": "Group D", "home_team": "TBD D3",       "away_team": "TBD D4",      "kickoff": "2026-06-13T22:00:00Z" },
-  { "id": 9,  "stage": "Group E", "home_team": "TBD E1",       "away_team": "TBD E2",      "kickoff": "2026-06-14T16:00:00Z" },
-  { "id": 10, "stage": "Group E", "home_team": "TBD E3",       "away_team": "TBD E4",      "kickoff": "2026-06-14T19:00:00Z" },
-  { "id": 11, "stage": "Group F", "home_team": "TBD F1",       "away_team": "TBD F2",      "kickoff": "2026-06-14T22:00:00Z" },
-  { "id": 12, "stage": "Group F", "home_team": "TBD F3",       "away_team": "TBD F4",      "kickoff": "2026-06-15T01:00:00Z" }
+  {
+    "id": 1,
+    "stage": "Group A",
+    "home_team": "Mexico",
+    "away_team": "A2",
+    "kickoff": "2026-06-11T16:00:00Z"
+  },
+  {
+    "id": 2,
+    "stage": "Group A",
+    "home_team": "A3",
+    "away_team": "A4",
+    "kickoff": "2026-06-11T19:00:00Z"
+  },
+  {
+    "id": 3,
+    "stage": "Group A",
+    "home_team": "Mexico",
+    "away_team": "A3",
+    "kickoff": "2026-06-11T22:00:00Z"
+  },
+  {
+    "id": 4,
+    "stage": "Group A",
+    "home_team": "A2",
+    "away_team": "A4",
+    "kickoff": "2026-06-12T01:00:00Z"
+  },
+  {
+    "id": 5,
+    "stage": "Group A",
+    "home_team": "Mexico",
+    "away_team": "A4",
+    "kickoff": "2026-06-11T16:00:00Z"
+  },
+  {
+    "id": 6,
+    "stage": "Group A",
+    "home_team": "A2",
+    "away_team": "A3",
+    "kickoff": "2026-06-12T16:00:00Z"
+  },
+  {
+    "id": 7,
+    "stage": "Group B",
+    "home_team": "Canada",
+    "away_team": "B2",
+    "kickoff": "2026-06-12T19:00:00Z"
+  },
+  {
+    "id": 8,
+    "stage": "Group B",
+    "home_team": "B3",
+    "away_team": "B4",
+    "kickoff": "2026-06-12T22:00:00Z"
+  },
+  {
+    "id": 9,
+    "stage": "Group B",
+    "home_team": "Canada",
+    "away_team": "B3",
+    "kickoff": "2026-06-13T01:00:00Z"
+  },
+  {
+    "id": 10,
+    "stage": "Group B",
+    "home_team": "B2",
+    "away_team": "B4",
+    "kickoff": "2026-06-12T16:00:00Z"
+  },
+  {
+    "id": 11,
+    "stage": "Group B",
+    "home_team": "Canada",
+    "away_team": "B4",
+    "kickoff": "2026-06-13T16:00:00Z"
+  },
+  {
+    "id": 12,
+    "stage": "Group B",
+    "home_team": "B2",
+    "away_team": "B3",
+    "kickoff": "2026-06-13T19:00:00Z"
+  },
+  {
+    "id": 13,
+    "stage": "Group C",
+    "home_team": "C1",
+    "away_team": "C2",
+    "kickoff": "2026-06-13T22:00:00Z"
+  },
+  {
+    "id": 14,
+    "stage": "Group C",
+    "home_team": "C3",
+    "away_team": "C4",
+    "kickoff": "2026-06-14T01:00:00Z"
+  },
+  {
+    "id": 15,
+    "stage": "Group C",
+    "home_team": "C1",
+    "away_team": "C3",
+    "kickoff": "2026-06-13T16:00:00Z"
+  },
+  {
+    "id": 16,
+    "stage": "Group C",
+    "home_team": "C2",
+    "away_team": "C4",
+    "kickoff": "2026-06-14T16:00:00Z"
+  },
+  {
+    "id": 17,
+    "stage": "Group C",
+    "home_team": "C1",
+    "away_team": "C4",
+    "kickoff": "2026-06-14T19:00:00Z"
+  },
+  {
+    "id": 18,
+    "stage": "Group C",
+    "home_team": "C2",
+    "away_team": "C3",
+    "kickoff": "2026-06-14T22:00:00Z"
+  },
+  {
+    "id": 19,
+    "stage": "Group D",
+    "home_team": "USA",
+    "away_team": "D2",
+    "kickoff": "2026-06-15T01:00:00Z"
+  },
+  {
+    "id": 20,
+    "stage": "Group D",
+    "home_team": "D3",
+    "away_team": "D4",
+    "kickoff": "2026-06-14T16:00:00Z"
+  },
+  {
+    "id": 21,
+    "stage": "Group D",
+    "home_team": "USA",
+    "away_team": "D3",
+    "kickoff": "2026-06-15T16:00:00Z"
+  },
+  {
+    "id": 22,
+    "stage": "Group D",
+    "home_team": "D2",
+    "away_team": "D4",
+    "kickoff": "2026-06-15T19:00:00Z"
+  },
+  {
+    "id": 23,
+    "stage": "Group D",
+    "home_team": "USA",
+    "away_team": "D4",
+    "kickoff": "2026-06-15T22:00:00Z"
+  },
+  {
+    "id": 24,
+    "stage": "Group D",
+    "home_team": "D2",
+    "away_team": "D3",
+    "kickoff": "2026-06-16T01:00:00Z"
+  },
+  {
+    "id": 25,
+    "stage": "Group E",
+    "home_team": "E1",
+    "away_team": "E2",
+    "kickoff": "2026-06-15T16:00:00Z"
+  },
+  {
+    "id": 26,
+    "stage": "Group E",
+    "home_team": "E3",
+    "away_team": "E4",
+    "kickoff": "2026-06-16T16:00:00Z"
+  },
+  {
+    "id": 27,
+    "stage": "Group E",
+    "home_team": "E1",
+    "away_team": "E3",
+    "kickoff": "2026-06-16T19:00:00Z"
+  },
+  {
+    "id": 28,
+    "stage": "Group E",
+    "home_team": "E2",
+    "away_team": "E4",
+    "kickoff": "2026-06-16T22:00:00Z"
+  },
+  {
+    "id": 29,
+    "stage": "Group E",
+    "home_team": "E1",
+    "away_team": "E4",
+    "kickoff": "2026-06-17T01:00:00Z"
+  },
+  {
+    "id": 30,
+    "stage": "Group E",
+    "home_team": "E2",
+    "away_team": "E3",
+    "kickoff": "2026-06-16T16:00:00Z"
+  },
+  {
+    "id": 31,
+    "stage": "Group F",
+    "home_team": "F1",
+    "away_team": "F2",
+    "kickoff": "2026-06-17T16:00:00Z"
+  },
+  {
+    "id": 32,
+    "stage": "Group F",
+    "home_team": "F3",
+    "away_team": "F4",
+    "kickoff": "2026-06-17T19:00:00Z"
+  },
+  {
+    "id": 33,
+    "stage": "Group F",
+    "home_team": "F1",
+    "away_team": "F3",
+    "kickoff": "2026-06-17T22:00:00Z"
+  },
+  {
+    "id": 34,
+    "stage": "Group F",
+    "home_team": "F2",
+    "away_team": "F4",
+    "kickoff": "2026-06-18T01:00:00Z"
+  },
+  {
+    "id": 35,
+    "stage": "Group F",
+    "home_team": "F1",
+    "away_team": "F4",
+    "kickoff": "2026-06-17T16:00:00Z"
+  },
+  {
+    "id": 36,
+    "stage": "Group F",
+    "home_team": "F2",
+    "away_team": "F3",
+    "kickoff": "2026-06-18T16:00:00Z"
+  },
+  {
+    "id": 37,
+    "stage": "Group G",
+    "home_team": "G1",
+    "away_team": "G2",
+    "kickoff": "2026-06-18T19:00:00Z"
+  },
+  {
+    "id": 38,
+    "stage": "Group G",
+    "home_team": "G3",
+    "away_team": "G4",
+    "kickoff": "2026-06-18T22:00:00Z"
+  },
+  {
+    "id": 39,
+    "stage": "Group G",
+    "home_team": "G1",
+    "away_team": "G3",
+    "kickoff": "2026-06-19T01:00:00Z"
+  },
+  {
+    "id": 40,
+    "stage": "Group G",
+    "home_team": "G2",
+    "away_team": "G4",
+    "kickoff": "2026-06-18T16:00:00Z"
+  },
+  {
+    "id": 41,
+    "stage": "Group G",
+    "home_team": "G1",
+    "away_team": "G4",
+    "kickoff": "2026-06-19T16:00:00Z"
+  },
+  {
+    "id": 42,
+    "stage": "Group G",
+    "home_team": "G2",
+    "away_team": "G3",
+    "kickoff": "2026-06-19T19:00:00Z"
+  },
+  {
+    "id": 43,
+    "stage": "Group H",
+    "home_team": "H1",
+    "away_team": "H2",
+    "kickoff": "2026-06-19T22:00:00Z"
+  },
+  {
+    "id": 44,
+    "stage": "Group H",
+    "home_team": "H3",
+    "away_team": "H4",
+    "kickoff": "2026-06-20T01:00:00Z"
+  },
+  {
+    "id": 45,
+    "stage": "Group H",
+    "home_team": "H1",
+    "away_team": "H3",
+    "kickoff": "2026-06-19T16:00:00Z"
+  },
+  {
+    "id": 46,
+    "stage": "Group H",
+    "home_team": "H2",
+    "away_team": "H4",
+    "kickoff": "2026-06-20T16:00:00Z"
+  },
+  {
+    "id": 47,
+    "stage": "Group H",
+    "home_team": "H1",
+    "away_team": "H4",
+    "kickoff": "2026-06-20T19:00:00Z"
+  },
+  {
+    "id": 48,
+    "stage": "Group H",
+    "home_team": "H2",
+    "away_team": "H3",
+    "kickoff": "2026-06-20T22:00:00Z"
+  },
+  {
+    "id": 49,
+    "stage": "Group I",
+    "home_team": "I1",
+    "away_team": "I2",
+    "kickoff": "2026-06-21T01:00:00Z"
+  },
+  {
+    "id": 50,
+    "stage": "Group I",
+    "home_team": "I3",
+    "away_team": "I4",
+    "kickoff": "2026-06-20T16:00:00Z"
+  },
+  {
+    "id": 51,
+    "stage": "Group I",
+    "home_team": "I1",
+    "away_team": "I3",
+    "kickoff": "2026-06-21T16:00:00Z"
+  },
+  {
+    "id": 52,
+    "stage": "Group I",
+    "home_team": "I2",
+    "away_team": "I4",
+    "kickoff": "2026-06-21T19:00:00Z"
+  },
+  {
+    "id": 53,
+    "stage": "Group I",
+    "home_team": "I1",
+    "away_team": "I4",
+    "kickoff": "2026-06-21T22:00:00Z"
+  },
+  {
+    "id": 54,
+    "stage": "Group I",
+    "home_team": "I2",
+    "away_team": "I3",
+    "kickoff": "2026-06-22T01:00:00Z"
+  },
+  {
+    "id": 55,
+    "stage": "Group J",
+    "home_team": "J1",
+    "away_team": "J2",
+    "kickoff": "2026-06-21T16:00:00Z"
+  },
+  {
+    "id": 56,
+    "stage": "Group J",
+    "home_team": "J3",
+    "away_team": "J4",
+    "kickoff": "2026-06-22T16:00:00Z"
+  },
+  {
+    "id": 57,
+    "stage": "Group J",
+    "home_team": "J1",
+    "away_team": "J3",
+    "kickoff": "2026-06-22T19:00:00Z"
+  },
+  {
+    "id": 58,
+    "stage": "Group J",
+    "home_team": "J2",
+    "away_team": "J4",
+    "kickoff": "2026-06-22T22:00:00Z"
+  },
+  {
+    "id": 59,
+    "stage": "Group J",
+    "home_team": "J1",
+    "away_team": "J4",
+    "kickoff": "2026-06-23T01:00:00Z"
+  },
+  {
+    "id": 60,
+    "stage": "Group J",
+    "home_team": "J2",
+    "away_team": "J3",
+    "kickoff": "2026-06-22T16:00:00Z"
+  },
+  {
+    "id": 61,
+    "stage": "Group K",
+    "home_team": "K1",
+    "away_team": "K2",
+    "kickoff": "2026-06-23T16:00:00Z"
+  },
+  {
+    "id": 62,
+    "stage": "Group K",
+    "home_team": "K3",
+    "away_team": "K4",
+    "kickoff": "2026-06-23T19:00:00Z"
+  },
+  {
+    "id": 63,
+    "stage": "Group K",
+    "home_team": "K1",
+    "away_team": "K3",
+    "kickoff": "2026-06-23T22:00:00Z"
+  },
+  {
+    "id": 64,
+    "stage": "Group K",
+    "home_team": "K2",
+    "away_team": "K4",
+    "kickoff": "2026-06-24T01:00:00Z"
+  },
+  {
+    "id": 65,
+    "stage": "Group K",
+    "home_team": "K1",
+    "away_team": "K4",
+    "kickoff": "2026-06-23T16:00:00Z"
+  },
+  {
+    "id": 66,
+    "stage": "Group K",
+    "home_team": "K2",
+    "away_team": "K3",
+    "kickoff": "2026-06-24T16:00:00Z"
+  },
+  {
+    "id": 67,
+    "stage": "Group L",
+    "home_team": "L1",
+    "away_team": "L2",
+    "kickoff": "2026-06-24T19:00:00Z"
+  },
+  {
+    "id": 68,
+    "stage": "Group L",
+    "home_team": "L3",
+    "away_team": "L4",
+    "kickoff": "2026-06-24T22:00:00Z"
+  },
+  {
+    "id": 69,
+    "stage": "Group L",
+    "home_team": "L1",
+    "away_team": "L3",
+    "kickoff": "2026-06-25T01:00:00Z"
+  },
+  {
+    "id": 70,
+    "stage": "Group L",
+    "home_team": "L2",
+    "away_team": "L4",
+    "kickoff": "2026-06-24T16:00:00Z"
+  },
+  {
+    "id": 71,
+    "stage": "Group L",
+    "home_team": "L1",
+    "away_team": "L4",
+    "kickoff": "2026-06-25T16:00:00Z"
+  },
+  {
+    "id": 72,
+    "stage": "Group L",
+    "home_team": "L2",
+    "away_team": "L3",
+    "kickoff": "2026-06-25T19:00:00Z"
+  },
+  {
+    "id": 73,
+    "stage": "Round of 32",
+    "home_team": "Q1",
+    "away_team": "Q2",
+    "kickoff": "2026-06-28T16:00:00Z"
+  },
+  {
+    "id": 74,
+    "stage": "Round of 32",
+    "home_team": "Q3",
+    "away_team": "Q4",
+    "kickoff": "2026-06-28T19:00:00Z"
+  },
+  {
+    "id": 75,
+    "stage": "Round of 32",
+    "home_team": "Q5",
+    "away_team": "Q6",
+    "kickoff": "2026-06-28T22:00:00Z"
+  },
+  {
+    "id": 76,
+    "stage": "Round of 32",
+    "home_team": "Q7",
+    "away_team": "Q8",
+    "kickoff": "2026-06-29T01:00:00Z"
+  },
+  {
+    "id": 77,
+    "stage": "Round of 32",
+    "home_team": "Q9",
+    "away_team": "Q10",
+    "kickoff": "2026-06-29T16:00:00Z"
+  },
+  {
+    "id": 78,
+    "stage": "Round of 32",
+    "home_team": "Q11",
+    "away_team": "Q12",
+    "kickoff": "2026-06-29T19:00:00Z"
+  },
+  {
+    "id": 79,
+    "stage": "Round of 32",
+    "home_team": "Q13",
+    "away_team": "Q14",
+    "kickoff": "2026-06-29T22:00:00Z"
+  },
+  {
+    "id": 80,
+    "stage": "Round of 32",
+    "home_team": "Q15",
+    "away_team": "Q16",
+    "kickoff": "2026-06-30T01:00:00Z"
+  },
+  {
+    "id": 81,
+    "stage": "Round of 32",
+    "home_team": "Q17",
+    "away_team": "Q18",
+    "kickoff": "2026-06-30T16:00:00Z"
+  },
+  {
+    "id": 82,
+    "stage": "Round of 32",
+    "home_team": "Q19",
+    "away_team": "Q20",
+    "kickoff": "2026-06-30T19:00:00Z"
+  },
+  {
+    "id": 83,
+    "stage": "Round of 32",
+    "home_team": "Q21",
+    "away_team": "Q22",
+    "kickoff": "2026-06-30T22:00:00Z"
+  },
+  {
+    "id": 84,
+    "stage": "Round of 32",
+    "home_team": "Q23",
+    "away_team": "Q24",
+    "kickoff": "2026-07-01T01:00:00Z"
+  },
+  {
+    "id": 85,
+    "stage": "Round of 32",
+    "home_team": "Q25",
+    "away_team": "Q26",
+    "kickoff": "2026-07-01T16:00:00Z"
+  },
+  {
+    "id": 86,
+    "stage": "Round of 32",
+    "home_team": "Q27",
+    "away_team": "Q28",
+    "kickoff": "2026-07-01T19:00:00Z"
+  },
+  {
+    "id": 87,
+    "stage": "Round of 32",
+    "home_team": "Q29",
+    "away_team": "Q30",
+    "kickoff": "2026-07-01T22:00:00Z"
+  },
+  {
+    "id": 88,
+    "stage": "Round of 32",
+    "home_team": "Q31",
+    "away_team": "Q32",
+    "kickoff": "2026-07-02T01:00:00Z"
+  },
+  {
+    "id": 89,
+    "stage": "Round of 16",
+    "home_team": "W73",
+    "away_team": "W74",
+    "kickoff": "2026-07-04T16:00:00Z"
+  },
+  {
+    "id": 90,
+    "stage": "Round of 16",
+    "home_team": "W75",
+    "away_team": "W76",
+    "kickoff": "2026-07-04T19:00:00Z"
+  },
+  {
+    "id": 91,
+    "stage": "Round of 16",
+    "home_team": "W77",
+    "away_team": "W78",
+    "kickoff": "2026-07-05T16:00:00Z"
+  },
+  {
+    "id": 92,
+    "stage": "Round of 16",
+    "home_team": "W79",
+    "away_team": "W80",
+    "kickoff": "2026-07-05T19:00:00Z"
+  },
+  {
+    "id": 93,
+    "stage": "Round of 16",
+    "home_team": "W81",
+    "away_team": "W82",
+    "kickoff": "2026-07-06T16:00:00Z"
+  },
+  {
+    "id": 94,
+    "stage": "Round of 16",
+    "home_team": "W83",
+    "away_team": "W84",
+    "kickoff": "2026-07-06T19:00:00Z"
+  },
+  {
+    "id": 95,
+    "stage": "Round of 16",
+    "home_team": "W85",
+    "away_team": "W86",
+    "kickoff": "2026-07-07T16:00:00Z"
+  },
+  {
+    "id": 96,
+    "stage": "Round of 16",
+    "home_team": "W87",
+    "away_team": "W88",
+    "kickoff": "2026-07-07T19:00:00Z"
+  },
+  {
+    "id": 97,
+    "stage": "Quarter-final",
+    "home_team": "W89",
+    "away_team": "W90",
+    "kickoff": "2026-07-09T16:00:00Z"
+  },
+  {
+    "id": 98,
+    "stage": "Quarter-final",
+    "home_team": "W91",
+    "away_team": "W92",
+    "kickoff": "2026-07-09T19:00:00Z"
+  },
+  {
+    "id": 99,
+    "stage": "Quarter-final",
+    "home_team": "W93",
+    "away_team": "W94",
+    "kickoff": "2026-07-10T16:00:00Z"
+  },
+  {
+    "id": 100,
+    "stage": "Quarter-final",
+    "home_team": "W95",
+    "away_team": "W96",
+    "kickoff": "2026-07-10T19:00:00Z"
+  },
+  {
+    "id": 101,
+    "stage": "Semi-final",
+    "home_team": "W97",
+    "away_team": "W98",
+    "kickoff": "2026-07-14T16:00:00Z"
+  },
+  {
+    "id": 102,
+    "stage": "Semi-final",
+    "home_team": "W99",
+    "away_team": "W100",
+    "kickoff": "2026-07-15T16:00:00Z"
+  },
+  {
+    "id": 103,
+    "stage": "Third place",
+    "home_team": "L101",
+    "away_team": "L102",
+    "kickoff": "2026-07-18T16:00:00Z"
+  },
+  {
+    "id": 104,
+    "stage": "Final",
+    "home_team": "W101",
+    "away_team": "W102",
+    "kickoff": "2026-07-19T16:00:00Z"
+  }
 ]
