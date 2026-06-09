@@ -88,12 +88,23 @@ function switchTab(which) {
 let allFixtures = [];
 let myPredictions = {};
 let stageFilter = "all";
+let statusFilter = "todo"; // todo | predicted | all
+let openStages = null; // Set of expanded stage names; null = "open the first one"
 
 function stageWeight(stage) {
   if (/^Group/.test(stage)) return 1;
   if (stage === "Quarter-final" || stage === "Semi-final" || stage === "Third place") return 2;
   if (stage === "Final") return 3;
   return 1;
+}
+
+const isOpen = (f, now) =>
+  f.status !== "finished" && new Date(f.kickoff).getTime() > now;
+
+function passesStatus(f, now) {
+  if (statusFilter === "all") return true;
+  if (statusFilter === "predicted") return !!myPredictions[f.id];
+  return isOpen(f, now) && !myPredictions[f.id]; // "todo"
 }
 
 async function loadFixtures() {
@@ -115,37 +126,96 @@ async function loadFixtures() {
 
 function renderFixtures() {
   const view = $("fixturesView");
+  const scrollY = window.scrollY;
   view.innerHTML = "";
+  const now = Date.now();
 
-  // Stage filter (preserve document order: groups first, then knockout rounds).
+  view.appendChild(renderFilterBar(now));
+
+  const shown = allFixtures.filter(
+    (f) => (stageFilter === "all" || f.stage === stageFilter) && passesStatus(f, now)
+  );
+
+  if (!shown.length) {
+    const p = document.createElement("p");
+    p.className = "note empty";
+    p.textContent =
+      statusFilter === "todo"
+        ? "🎉 Nothing left to predict in this view."
+        : "No matches match this filter.";
+    view.appendChild(p);
+    return;
+  }
+
+  // Group into collapsible sections by stage, in fixture order.
+  const stagesInOrder = [...new Set(shown.map((f) => f.stage))];
+  if (openStages === null) openStages = new Set([stagesInOrder[0]]);
+
+  for (const stage of stagesInOrder) {
+    const matches = shown.filter((f) => f.stage === stage);
+    const w = stageWeight(stage);
+    const open = openStages.has(stage);
+
+    const header = document.createElement("button");
+    header.className = "stage-header" + (open ? " open" : "");
+    header.innerHTML =
+      `<span class="stage-name">${stage}` +
+      (w > 1 ? ` <span class="weight">×${w}</span>` : "") +
+      `</span><span class="count">${matches.length}</span>`;
+    header.onclick = () => {
+      open ? openStages.delete(stage) : openStages.add(stage);
+      renderFixtures();
+    };
+    view.appendChild(header);
+
+    if (open) {
+      const wrap = document.createElement("div");
+      wrap.className = "stage-body";
+      for (const f of matches) wrap.appendChild(renderMatch(f, now));
+      view.appendChild(wrap);
+    }
+  }
+  window.scrollTo(0, scrollY);
+}
+
+function renderFilterBar(now) {
+  const bar = document.createElement("div");
+  bar.className = "filterbar";
+
+  const todo = allFixtures.filter((f) => isOpen(f, now) && !myPredictions[f.id]).length;
+  const predicted = allFixtures.filter((f) => myPredictions[f.id]).length;
+  const chips = [
+    ["todo", `To predict (${todo})`],
+    ["predicted", `Predicted (${predicted})`],
+    ["all", "All"],
+  ];
+  const chipWrap = document.createElement("div");
+  chipWrap.className = "chips";
+  for (const [val, label] of chips) {
+    const b = document.createElement("button");
+    b.className = "chip" + (statusFilter === val ? " active" : "");
+    b.textContent = label;
+    b.onclick = () => {
+      statusFilter = val;
+      renderFixtures();
+    };
+    chipWrap.appendChild(b);
+  }
+  bar.appendChild(chipWrap);
+
   const stages = [...new Set(allFixtures.map((f) => f.stage))];
-  const filter = document.createElement("select");
-  filter.id = "stageFilter";
-  filter.innerHTML =
-    `<option value="all">All matches</option>` +
+  const sel = document.createElement("select");
+  sel.id = "stageFilter";
+  sel.innerHTML =
+    `<option value="all">All stages</option>` +
     stages.map((s) => `<option value="${s}">${s}</option>`).join("");
-  filter.value = stageFilter;
-  filter.onchange = () => {
-    stageFilter = filter.value;
+  sel.value = stageFilter;
+  sel.onchange = () => {
+    stageFilter = sel.value;
     renderFixtures();
   };
-  view.appendChild(filter);
-
-  const shown = allFixtures.filter((f) => stageFilter === "all" || f.stage === stageFilter);
-  const now = Date.now();
-  let currentStage = null;
-
-  for (const f of shown) {
-    if (f.stage !== currentStage) {
-      currentStage = f.stage;
-      const w = stageWeight(f.stage);
-      const h = document.createElement("h2");
-      h.className = "stage-header";
-      h.innerHTML = `${f.stage}${w > 1 ? ` <span class="weight">×${w} points</span>` : ""}`;
-      view.appendChild(h);
-    }
-    view.appendChild(renderMatch(f, now));
-  }
+  bar.appendChild(sel);
+  return bar;
 }
 
 function renderMatch(f, now) {
@@ -154,7 +224,7 @@ function renderMatch(f, now) {
   const finished = f.status === "finished";
 
   const card = document.createElement("div");
-  card.className = "card";
+  card.className = "card match-card";
   card.innerHTML = `
     <div class="match">
       <span class="team home">${f.home_team}</span>
@@ -235,7 +305,10 @@ async function savePrediction(fixtureId, card, statusEl) {
       method: "POST",
       body: { fixtureId, home: Number(home), away: Number(away) },
     });
+    myPredictions[fixtureId] = { home: Number(home), away: Number(away) };
     flash(statusEl, "✓ Saved");
+    // Keep the chip counts in sync once the confirmation has been seen.
+    if (statusFilter === "todo") setTimeout(renderFixtures, 1000);
   } catch (e) {
     flash(statusEl, e.message, true);
   }

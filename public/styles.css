@@ -99,19 +99,69 @@ th { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
 td.num, th.num { text-align: right; }
 tr.me { background: rgba(74, 222, 128, 0.08); }
 
-#stageFilter {
-  width: 100%;
-  margin-bottom: 1rem;
+/* Sticky filter bar: status chips + stage dropdown */
+.filterbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  padding: 0.6rem 0 0.7rem;
+  margin-bottom: 0.3rem;
 }
+.chips { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
+.chip {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.5rem;
+}
+.chip.active { border-color: var(--accent); color: var(--accent); }
+#stageFilter { width: 100%; }
+.empty { text-align: center; padding: 2rem 0; }
+
+/* Collapsible stage section header */
 .stage-header {
-  font-size: 1rem;
-  margin: 1.4rem 0 0.6rem;
-  padding-bottom: 0.3rem;
+  width: 100%;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0.9rem 0 0.5rem;
+  padding: 0.5rem 0.2rem;
+  background: transparent;
+  border: none;
   border-bottom: 1px solid var(--line);
+  border-radius: 0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.6rem;
+  cursor: pointer;
 }
+.stage-header:hover { filter: none; color: var(--accent); }
+.stage-name::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 0.5rem;
+  color: var(--muted);
+  transition: transform 0.15s ease;
+}
+.stage-header.open .stage-name::before { transform: rotate(90deg); }
+.stage-header .count {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.8rem;
+  background: var(--card);
+  border-radius: 999px;
+  padding: 0.05rem 0.55rem;
+}
+
+/* Compact match cards */
+.match-card { padding: 0.55rem 0.8rem; margin-bottom: 0.45rem; }
+.match-card .team { font-size: 0.92rem; }
+.match-card .score { width: 2.6rem; padding: 0.35rem; }
+.match-card .meta { margin-top: 0.35rem; }
+.match-card .kickoff { font-size: 0.78rem; }
 .weight {
   font-size: 0.72rem;
   color: var(--accent);
